@@ -15,3 +15,6 @@ Sütunların özellikleri:
 
 113 tane hero olması gerekirken mapping için kullanılması verilen linkte 112 hero bulunmaktadır.
 https://api.opendota.com/api/heroes ile bütün hero'lar çekildiğinde mapping eksik olan 24 idli heronun burada da olmadığı tespit edilmiştir. Bunun üstüne en son 113 id'li hero vardı mappingte ondan sonra gelen id'si 114 hero eklendi json dosyasına
+
+
+Bütün columnlar aslında kategorik bir değer bizler için. Nümerik değil bu değerler.
