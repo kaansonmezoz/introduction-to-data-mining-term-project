@@ -11,3 +11,7 @@ Sütunların özellikleri:
 
 
 5 ve sonrasındaki herolar https://github.com/kronusme/dota2-api/blob/master/data/heroes.json sitesindeki mappinge göre sıralanmıştır. Sütunların belirtilmiş olduğu özelliklere göre verisetine header eklenmiştir. Bu sayede daha rahat incelenmesi sağlanmıştır.
+
+
+113 tane hero olması gerekirken mapping için kullanılması verilen linkte 112 hero bulunmaktadır.
+https://api.opendota.com/api/heroes ile bütün hero'lar çekildiğinde mapping eksik olan 24 idli heronun burada da olmadığı tespit edilmiştir. Bunun üstüne en son 113 id'li hero vardı mappingte ondan sonra gelen id'si 114 hero eklendi json dosyasına
