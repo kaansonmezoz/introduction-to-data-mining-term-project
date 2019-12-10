@@ -5,6 +5,7 @@ DATASET_PATH = "../data/with-headers/dataset.csv"
 
 classes = {'team_1': 1, 'team_2': -1}
 
+
 def read_dataset(file_path = DATASET_PATH):
     return pd.read_csv(file_path)
 
@@ -26,29 +27,45 @@ def get_feature_column_names(samples):
     
     return column_names
 
-def calculate_probability_for(class_samples, feature_name, feature_value):
+def calculate_probability_for(class_samples, feature_name, feature_value, occurences, class_name):
     sample_count = class_samples.shape[0]
-    filtered_sample_count = filter_samples_by(class_samples, feature_name, feature_value).shape[0]
+    
+    feature_occurences = occurences[class_name]
+    
+    if feature_name in feature_occurences:
+        feature_occurences = feature_occurences[feature_name]
+        feature_value_string = str(feature_value)
+        if feature_value_string in feature_occurences:
+            filtered_sample_count = feature_occurences[feature_value_string]
+        else:
+            filtered_sample_count = filter_samples_by(class_samples, feature_name, feature_value).shape[0]
+            feature_occurences[feature_value_string] = filtered_sample_count
+    else:
+        filtered_sample_count = filter_samples_by(class_samples, feature_name, feature_value).shape[0]
+        occurence = {str(feature_value): filtered_sample_count}
+        feature_occurences[feature_name] = occurence
+        
+    
+    #filtered_sample_count = filter_samples_by(class_samples, feature_name, feature_value).shape[0]
         
     return filtered_sample_count / sample_count
     
-def calculate_probability_for_all_features(class_samples, test_sample):
+def calculate_probability_for_all_features(class_samples, test_sample, occurences, class_name):
     feature_columns = get_feature_column_names(class_samples)
     probability = 1.0
     
     for i in range(len(feature_columns)):
         feature = feature_columns[i]
         value = test_sample[feature]
-        feature_probability = calculate_probability_for(class_samples, feature, value)  
+        feature_probability = calculate_probability_for(class_samples, feature, value, occurences, class_name)  
         probability = probability * feature_probability
         
     return probability
 
-def predict_sample(class_1_samples, class_2_samples, test_sample):
+def predict_sample(class_1_samples, class_2_samples, test_sample, occurences):
     
-    
-    team_1_probability = calculate_probability_for_all_features(class_1_samples, test_sample)
-    team_2_probability = calculate_probability_for_all_features(class_2_samples, test_sample)
+    team_1_probability = calculate_probability_for_all_features(class_1_samples, test_sample, occurences, "team_1")
+    team_2_probability = calculate_probability_for_all_features(class_2_samples, test_sample, occurences, "team_2")
     
     if team_1_probability > team_2_probability:
         return classes['team_1']
@@ -63,13 +80,19 @@ def init_prediction_counts():
 
 def predict_all_samples(train_dataset, test_dataset):
     predictions = init_prediction_counts()
+    
+    occurences = {
+        'team_1': {}, ## 'team_1': { 'feature': {'-1': .., '0': ..., '1': ...} }
+        'team_2': {}
+    }
+
     team_1_samples, team_2_samples = get_class_samples(train_dataset)
     test_size = test_dataset.shape[0]
     
     for i in range(test_size):
         test_sample = test_dataset.iloc[i]
         actual_class = test_sample['class']
-        predicted_class = predict_sample(team_1_samples, team_2_samples, test_sample)
+        predicted_class = predict_sample(team_1_samples, team_2_samples, test_sample, occurences)
         
         print("Prediction: " + str(i+1) + " actual: " + str(actual_class) + " predicted: " + str(predicted_class))
         
