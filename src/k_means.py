@@ -88,7 +88,7 @@ def find_cluster_class(elements):
     if class_count['1'] > class_count['-1']:
         return "team_1", class_count['1'], class_count['-1'] ## returns class_label, true_predictions, wrong_predictions
     else:
-        return 1
+        return "team_2", class_count['-1'], class_count['1']
     
 def clear_cluster_elements(clusters):
     clusters['cluster_1']['elements'].clear()
