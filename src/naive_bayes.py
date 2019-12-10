@@ -123,6 +123,7 @@ kFold = KFold(n_splits = 5, shuffle = False, random_state = None)
 results = []
 
 
+
 count = 1
 
 for train_indices, test_indices in kFold.split(dataset):    
@@ -134,7 +135,21 @@ for train_indices, test_indices in kFold.split(dataset):
     count = count + 1
 
 
+predictions = {'-1': {'avg_true': 0, 'avg_false': 0},
+               '1': {'avg_true': 0, 'avg_false': 0},
+              }
 
+for i in range(len(results)):
+    predictions['-1']['avg_true'] += results[i]['-1']['true']
+    predictions['-1']['avg_false'] += results[i]['-1']['false']
+    
+    predictions['1']['avg_true'] += results[i]['1']['true']
+    predictions['1']['avg_false'] += results[i]['1']['false']
 
+avg_accuracy = (predictions['-1']['avg_true'] + predictions['1']['avg_true']) / (test_dataset.shape[0] * 5)
 
-
+predictions['-1']['avg_true'] = predictions['-1']['avg_true']  / 5
+predictions['-1']['avg_false'] = predictions['-1']['avg_false'] / 5
+    
+predictions['1']['avg_true'] = predictions['1']['avg_true'] / 5
+predictions['1']['avg_false'] = predictions['1']['avg_false'] / 5
